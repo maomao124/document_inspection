@@ -127,16 +127,60 @@ public class test
 
     public static void MD5Verification(TreeMap<String, String> map)
     {
-        int errorCount=0;
+        int errorCount = 0;
+        LinkedList<String> errorList = new LinkedList<>();
         String fileMD5;
         String calculateMD5;
         for (String path : map.keySet())
         {
-            System.out.println("文件路径："+path);
-            fileMD5=map.get(path);
-            calculateMD5= class_getFileMD5.getFileMD5(path);
-            System.out.println("文件中的MD5值："+fileMD5);
-
+            System.out.println("文件路径：" + path);
+            fileMD5 = map.get(path);
+            calculateMD5 = class_getFileMD5.getFileMD5(path);
+            System.out.println("文件中的MD5值：" + fileMD5);
+            System.out.println("计算出的MD5值：" + calculateMD5);
+            if (fileMD5.equals(calculateMD5))
+            {
+                System.out.println("结果：正确");
+            }
+            else
+            {
+                System.out.println("结果：错误！！！！！");
+                errorCount++;
+                errorList.add(path);
+            }
+            System.out.println();
+        }
+        System.out.println("------------最终结果-------------");
+        if (errorCount == 0)
+        {
+            System.out.println("未发现错误， " + map.size() + "个文件全部正确！！！");
+        }
+        else
+        {
+            Toolkit.getDefaultToolkit().beep();
+            System.out.println("\t\t全部文件：" + map.size());
+            System.out.println("\t\t错误文件：" + errorCount);
+            System.out.println("\t\t错误文件列表：");
+            for (String path : errorList)
+            {
+                System.out.println(path);
+            }
+        }
+        LinkedList<String>list2=class_getFiles_RelativePath.getFiles_RelativePath();
+        if (list2.size()-1!=map.size())
+        {
+            if (list2.size()-1>map.size())
+            {
+                System.out.println("注意：");
+                System.out.println("在此相对路径下有"+((list2.size()-1)-map.size())+"个文件未计入统计");
+                System.out.println("也有可能既丢失了文件又有文件未计入统计");
+            }
+            else
+            {
+                System.out.println("注意：");
+                System.out.println(map.size()-(list2.size()-1)+"个文件丢失！！！");
+                System.out.println("也有可能既丢失了文件又有文件未计入统计");
+            }
         }
     }
 
@@ -146,6 +190,9 @@ public class test
         System.out.print("请选择：");
         Scanner input = new Scanner(System.in);
         char ch = input.next().charAt(0);
+        //------------------------------------------------------
+        long startTime = System.nanoTime();   //获取开始时间
+        //------------------------------------------------------
         if (ch == '1')
         {
             LinkedList<String> list;
@@ -157,7 +204,12 @@ public class test
             int i = 0;
             for (String path : list)
             {
-                System.out.print("\b\b\b\b\b\b\b\b\b\b进度：" + (i + 1) + "/" + sum);
+                if (path.equals("MD5.txt"))
+                {
+                    sum--;
+                    continue;
+                }
+                System.out.print("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b进度：" + (i + 1) + "/" + sum);
                 md5 = class_getFileMD5.getFileMD5(path);
                 map.put(path, md5);
                 i++;
@@ -166,10 +218,11 @@ public class test
             System.out.println("正在写入");
             MD5Write(map);
             System.out.println("写入完成");
+            System.out.println("一共"+sum+"个文件");
         }
         else if (ch == '2')
         {
-            TreeMap<String, String>map;
+            TreeMap<String, String> map;
             map = MD5Read();
             /*
             for (String s : map.keySet())
@@ -185,5 +238,41 @@ public class test
             Toolkit.getDefaultToolkit().beep();
             System.out.println("输入错误！！！");
         }
+        System.out.println();
+        //------------------------------------------------------
+        long endTime = System.nanoTime(); //获取结束时间
+        if ((endTime - startTime) < 1000000)
+        {
+             double final_runtime;
+             final_runtime = (endTime - startTime);
+             final_runtime = final_runtime / 1000;
+             System.out.println("算法运行时间： " + final_runtime + "微秒");
+        }
+        else if ((endTime - startTime) >= 1000000 && (endTime - startTime) < 10000000000L)
+        {
+            double final_runtime;
+            final_runtime = (endTime - startTime) / 1000;
+            final_runtime = final_runtime / 1000;
+            System.out.println("算法运行时间： " + final_runtime + "毫秒");
+         }
+        else
+        {
+             double final_runtime;
+             final_runtime = (endTime - startTime) / 10000;
+             final_runtime = final_runtime / 100000;
+             System.out.println("算法运行时间： " + final_runtime + "秒");
+        }
+        Runtime r = Runtime.getRuntime();
+        float memory;
+        memory = r.totalMemory();
+        memory = memory / 1024 / 1024;
+        System.out.printf("JVM总内存：%.3fMB\n", memory);
+        memory = r.freeMemory();
+        memory = memory / 1024 / 1024;
+        System.out.printf(" 空闲内存：%.3fMB\n", memory);
+        memory = r.totalMemory() - r.freeMemory();
+        memory = memory / 1024 / 1024;
+        System.out.printf("已使用的内存：%.4fMB\n", memory);
+        //------------------------------------------------------
     }
 }

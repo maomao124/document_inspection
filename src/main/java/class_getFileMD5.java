@@ -38,7 +38,7 @@ public class class_getFileMD5
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             return "";
         }
     }

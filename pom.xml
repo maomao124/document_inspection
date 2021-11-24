@@ -33,7 +33,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>class_getFiles_RelativePath</mainClass>
+                            <mainClass>test</mainClass>
                             <!--更改项，主类名-->
                         </manifest>
                     </archive>
